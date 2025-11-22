@@ -1,0 +1,12 @@
+services:
+
+  cron:
+    build:
+      context: .
+      target: cron
+    user: root # Daemon needs to run as a root. But your crontab will be run as user 'automations'
+    restart: unless-stopped
+    volumes:
+      # TODO: mount scripts
+      # TODO: mount crontab
+      - ./logs/cron.log:/home/automations/cron.log
