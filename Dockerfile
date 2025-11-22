@@ -7,8 +7,12 @@ RUN apk add --no-cache netcat-openbsd
 # Cron
 FROM base AS cron
 
-# Install cronie (cron daemon)
-RUN apk add --no-cache cronie
+# Install cronie (cron daemon) and docker-cli
+RUN apk add --no-cache \
+    cronie \
+    docker-cli
+# TODO: use docker-cli as a base image
+# TODO: move most of this to 'base', for usage in other targets
 
 # Configure automations user and crontab
 RUN adduser -D -h /home/automations automations && \

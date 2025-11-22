@@ -11,4 +11,5 @@ use_docker_proxy() {
   fi
 
   echo "Using Docker socket proxy at $target_tcp_docker_host"
+  export DOCKER_HOST="$target_tcp_docker_host"
 }
