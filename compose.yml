@@ -12,8 +12,8 @@ services:
       - ./examples/demo.sh:/home/automations/scripts/demo.sh
       # Mount the user 'automations' crontab from the repository
       - ./examples/crontab:/etc/crontabs/automations
-      # Mount the cron log file
-      - ./logs/cron.log:/home/automations/cron.log
+      # Mount the logs directory
+      - ./logs:/home/automations/logs
     restart: unless-stopped
 
   docker-socket-proxy:
