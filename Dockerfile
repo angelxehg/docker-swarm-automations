@@ -3,6 +3,7 @@ FROM docker:29.0.2-cli-alpine3.22 AS base
 
 # Install common dependencies
 RUN apk add --no-cache \
+    aws-cli \
     netcat-openbsd \
     curl \
     jq
