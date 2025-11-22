@@ -8,5 +8,7 @@ services:
     restart: unless-stopped
     volumes:
       # TODO: mount scripts
-      # TODO: mount crontab
+      # Mount the user 'automations' crontab from the repository
+      - ./examples/crontab:/etc/crontabs/automations
+      # Mount the cron log file
       - ./logs/cron.log:/home/automations/cron.log

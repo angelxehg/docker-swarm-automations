@@ -1,0 +1,5 @@
+# Example crontab for user 'automations'
+# Runs every minute and appends a line to the cron.log inside the container.
+# Note: This file is mounted into the container at /var/spool/cron/crontabs/automations
+
+* * * * * echo "Hello from $(whoami) at $(date) on mounted crontab" >> /home/automations/cron.log
