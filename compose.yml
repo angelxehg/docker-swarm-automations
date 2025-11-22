@@ -7,7 +7,8 @@ services:
     user: root # Daemon needs to run as a root. But your crontab will be run as user 'automations'
     restart: unless-stopped
     volumes:
-      # TODO: mount scripts
+      # Mount one of the demo scripts
+      - ./examples/demo.sh:/home/automations/scripts/demo.sh
       # Mount the user 'automations' crontab from the repository
       - ./examples/crontab:/etc/crontabs/automations
       # Mount the cron log file

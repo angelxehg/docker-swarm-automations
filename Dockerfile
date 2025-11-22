@@ -7,7 +7,9 @@ RUN apk add --no-cache cronie
 # Configure automations user and crontab
 RUN adduser -D -h /home/automations automations && \
     # Create directories \
+    mkdir "/home/automations/included-scripts" && \
     mkdir "/home/automations/scripts" && \
+    chown -R automations:automations "/home/automations/included-scripts" && \
     chown -R automations:automations "/home/automations/scripts" && \
     # Create log file \
     touch /home/automations/cron.log && \
@@ -20,6 +22,9 @@ RUN adduser -D -h /home/automations automations && \
     echo "* * * * * echo \"Hello from \$(whoami) at \$(date)\" >> /home/automations/cron.log" > /etc/crontabs/automations && \
     chown automations:automations /etc/crontabs/automations && \
     chmod 600 /etc/crontabs/automations
+
+# Copy included scripts
+COPY --chown=automations:automations ./scripts/ /home/automations/included-scripts/
 
 # Run crond in foreground
 CMD ["crond", "-f"]
