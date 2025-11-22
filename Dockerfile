@@ -1,5 +1,11 @@
+# Base
+FROM alpine:3.22 AS base
+
+# Install common dependencies
+RUN apk add --no-cache netcat-openbsd
+
 # Cron
-FROM alpine:3.22 AS cron
+FROM base AS cron
 
 # Install cronie (cron daemon)
 RUN apk add --no-cache cronie

@@ -3,10 +3,12 @@
 use_docker_proxy() {
   local docker_socket_proxy_host="$1" # docker-socket-proxy
   local docker_socket_proxy_port="$2" # 2375
+  local target_tcp_docker_host=tcp://"$docker_socket_proxy_host":"$docker_socket_proxy_port"
 
-  # TODO: use nc
+  if ! nc -z "$docker_socket_proxy_host" "$docker_socket_proxy_port"; then
+    echo "Docker socket proxy not reachable at $target_tcp_docker_host"
+    exit 1
+  fi
 
-  echo "Docker available at tcp://$docker_socket_proxy_host:$docker_socket_proxy_port"
-
-  # TODO: export DOCKER_HOST
+  echo "Using Docker socket proxy at $target_tcp_docker_host"
 }
