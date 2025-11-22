@@ -1,5 +1,5 @@
 # Base
-FROM alpine:3.22 AS base
+FROM docker:29.0.2-cli-alpine3.22 AS base
 
 # Install common dependencies
 RUN apk add --no-cache netcat-openbsd
@@ -7,11 +7,9 @@ RUN apk add --no-cache netcat-openbsd
 # Cron
 FROM base AS cron
 
-# Install cronie (cron daemon) and docker-cli
+# Install cronie (cron daemon)
 RUN apk add --no-cache \
-    cronie \
-    docker-cli
-# TODO: use docker-cli as a base image
+    cronie
 # TODO: move most of this to 'base', for usage in other targets
 
 # Configure automations user and crontab

@@ -2,5 +2,8 @@
 # Runs every minute and appends a line to the cron.log inside the container.
 # Note: This file is mounted into the container at /var/spool/cron/crontabs/automations
 
+SHELL=/bin/sh
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
 # * * * * * echo "Hello from $(whoami) at $(date) on mounted crontab" >> /home/automations/logs/cron.log 2>&1
 * * * * * /home/automations/scripts/demo.sh >> /home/automations/logs/demo.log 2>&1
