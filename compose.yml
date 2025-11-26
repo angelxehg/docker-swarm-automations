@@ -1,5 +1,23 @@
 services:
 
+  webhook:
+    build:
+      context: .
+      target: webhook
+    command: ["-hooks=/home/automations/hooks.json", "-verbose"]
+    networks:
+      - default
+    volumes:
+      # Mount one of the demo scripts
+      - ./examples/hooks.json:/home/automations/hooks.json
+      - ./examples/webhook.sh:/home/automations/scripts/webhook.sh
+    healthcheck:
+      test: [ "CMD", "wget", "--spider", "-q", "http://localhost:9000/" ]
+      interval: 5s
+      timeout: 10s
+      start_period: 10s
+    restart: on-failure
+
   cron:
     build:
       context: .

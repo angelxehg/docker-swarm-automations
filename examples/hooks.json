@@ -1,0 +1,15 @@
+[
+  {
+    "id": "demo",
+    "execute-command": "/home/automations/scripts/webhook.sh",
+    "command-working-directory": "/home/automations/scripts",
+    "response-message": "{\"status\": \"ok\"}",
+    "response-headers":
+    [
+      {
+        "name": "Content-Type",
+        "value": "application/json"
+      }
+    ]
+  }
+]
