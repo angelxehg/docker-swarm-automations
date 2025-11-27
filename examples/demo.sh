@@ -1,6 +1,6 @@
 #!/bin/sh
 
-. /home/automations/included-scripts/docker/use-proxy.sh
+. /opt/automations/included-scripts/docker/use-proxy.sh
 
 echo "Attempting to execute a docker command via docker proxy..."
 

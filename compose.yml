@@ -4,13 +4,15 @@ services:
     build:
       context: .
       target: webhook
-    command: ["-hooks=/home/automations/hooks.json", "-verbose"]
+      args:
+        AWS_ENABLED: "true"
+    command: ["-hooks=/opt/automations/hooks.json", "-verbose"]
     networks:
       - default
     volumes:
       # Mount one of the demo scripts
-      - ./examples/hooks.json:/home/automations/hooks.json
-      - ./examples/webhook.sh:/home/automations/scripts/webhook.sh
+      - ./examples/hooks.json:/opt/automations/hooks.json
+      - ./examples/webhook.sh:/opt/automations/scripts/webhook.sh
     healthcheck:
       test: [ "CMD", "wget", "--spider", "-q", "http://localhost:9000/" ]
       interval: 5s
@@ -22,16 +24,18 @@ services:
     build:
       context: .
       target: cron
+      args:
+        AWS_ENABLED: "true"
     user: root # Daemon needs to run as a root. But your crontab will be run as user 'automations'
     networks:
       - default
     volumes:
       # Mount one of the demo scripts
-      - ./examples/demo.sh:/home/automations/scripts/demo.sh
+      - ./examples/demo.sh:/opt/automations/scripts/demo.sh
       # Mount the user 'automations' crontab from the repository
       - ./examples/crontab:/etc/crontabs/automations
       # Mount the logs directory
-      - ./logs:/home/automations/logs
+      - ./logs:/opt/automations/logs
     restart: unless-stopped
 
   docker-socket-proxy:

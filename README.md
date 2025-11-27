@@ -3,9 +3,9 @@
 Collection of docker images and scripts to implement Docker Swarm Automations (Webhooks, Cron jobs)
 
 Notes:
-* Mount or copy yours scripts to `/home/automations/scripts/`.
-* Write your logs to `/home/automations/logs/my-script.log`.
-* Import included scripts from `/home/automations/included-scripts/`.
+* Mount or copy yours scripts to `/opt/automations/scripts/`.
+* Write your logs to `/opt/automations/logs/my-script.log`.
+* Import included scripts from `/opt/automations/included-scripts/`.
 * Scripts should have execute permissions for `automations`, at least `u+x`.
 
 ## Local development

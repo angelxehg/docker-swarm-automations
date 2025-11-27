@@ -16,24 +16,22 @@ RUN CGO_ENABLED=0 go build -ldflags="-s -w" -o /usr/local/bin/webhook
 FROM docker:29.0.2-cli-alpine3.22 AS base
 
 # Install common dependencies
+ARG AWS_ENABLED=false
 RUN apk add --no-cache \
-    aws-cli \
     netcat-openbsd \
     curl \
-    jq
+    jq && \
+    if [ "$AWS_ENABLED" = "true" ]; then apk add --no-cache aws-cli; fi
 
 # Create non root user
-RUN adduser -D -h /home/automations automations && \
-    # Create directories \
-    mkdir "/home/automations/included-scripts" && \
-    mkdir "/home/automations/scripts" && \
-    mkdir "/home/automations/logs" && \
-    chown -R automations:automations "/home/automations/included-scripts" && \
-    chown -R automations:automations "/home/automations/scripts" && \
-    chown -R automations:automations "/home/automations/logs"
+RUN adduser -D automations && \
+    mkdir -p /opt/automations/included-scripts && \
+    mkdir -p /opt/automations/scripts && \
+    mkdir -p /opt/automations/logs && \
+    chown -R automations:automations /opt/automations
 
 # Copy included scripts
-COPY --chown=automations:automations ./scripts/ /home/automations/included-scripts/
+COPY --chown=automations:automations ./scripts/ /opt/automations/included-scripts/
 
 # Webhook
 FROM base AS webhook
@@ -64,7 +62,7 @@ RUN mkdir -p /etc/crontabs && \
     chown root:root /etc/crontabs && \
     chmod 755 /etc/crontabs && \
     # Create default crontab \
-    echo "* * * * * echo \"Hello from \$(whoami) at \$(date)\" >> /home/automations/logs/cron.log 2>&1" > /etc/crontabs/automations && \
+    echo "* * * * * echo \"Hello from \$(whoami) at \$(date)\" >> /opt/automations/logs/cron.log 2>&1" > /etc/crontabs/automations && \
     chown automations:automations /etc/crontabs/automations && \
     chmod 600 /etc/crontabs/automations
 

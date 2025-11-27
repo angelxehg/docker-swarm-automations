@@ -1,6 +1,6 @@
 #!/bin/sh
 
-. /home/automations/included-scripts/docker/use-proxy.sh
+. /opt/automations/included-scripts/docker/use-proxy.sh
 
 DOCKER_SOCKET_PROXY_HOST=docker-socket-proxy
 DOCKER_SOCKET_PROXY_PORT=2375
