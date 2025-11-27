@@ -4,21 +4,22 @@ on:
   push:
     branches:
       - main
-  # TODO: on tags
+    tags:
+      - "v*"
 
 jobs:
   build:
-    name: Build
+    name: Build (cron + webhook)
     runs-on: ubuntu-24.04
 
     env:
       REGISTRY: ghcr.io
       REPO: ${{ github.repository }}
-      VERSION: main # TODO: generate by git tags too
+      VERSION: ${{ github.ref_name }} # "main" or "v0.1.0"
 
     permissions:
-      contents: read  # Required to check out repository code
-      packages: write # Required to push Docker images
+      contents: read
+      packages: write
 
     steps:
       - uses: actions/checkout@v6
@@ -32,17 +33,42 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and push cron
+      - name: Build and push all images
         uses: docker/build-push-action@v6
         with:
           context: .
           file: ./Dockerfile
-          target: cron
+          target: ${{ matrix.target }}
+          build-args: |
+            AWS_ENABLED=${{ matrix.aws }}
+
           push: ${{ github.event_name != 'pull_request' }}
           tags: |
-            ${{ env.REGISTRY }}/${{ env.REPO }}:cron-${{ env.VERSION }}
+            ${{ env.REGISTRY }}/${{ env.REPO }}:${{ matrix.tag }}-${{ env.VERSION }}
+
           platforms: |
             linux/amd64
             linux/arm64
+
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # --- webhook ---
+          - target: webhook
+            aws: "false"
+            tag: "webhook"
+          - target: webhook
+            aws: "true"
+            tag: "webhook-aws"
+
+          # --- cron ---
+          - target: cron
+            aws: "false"
+            tag: "cron"
+          - target: cron
+            aws: "true"
+            tag: "cron-aws"
