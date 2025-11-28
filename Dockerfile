@@ -3,6 +3,7 @@ FROM golang:alpine AS build-supercronic
 WORKDIR /go/src/github.com/aptible/supercronic
 RUN apk add --no-cache git
 RUN git clone https://github.com/aptible/supercronic.git . && \
+    git checkout v0.2.39 && \
     go build -o /usr/local/bin/supercronic .
 
 # Build webhook. Taken from https://github.com/almir/docker-webhook
