@@ -1,4 +1,11 @@
-# Taken from https://github.com/almir/docker-webhook
+# Build supercronic
+FROM golang:alpine AS build-supercronic
+WORKDIR /go/src/github.com/aptible/supercronic
+RUN apk add --no-cache git
+RUN git clone https://github.com/aptible/supercronic.git . && \
+    go build -o /usr/local/bin/supercronic .
+
+# Build webhook. Taken from https://github.com/almir/docker-webhook
 FROM golang:alpine AS build-webhook
 
 # Install dependencies
@@ -27,8 +34,8 @@ RUN apk add --no-cache \
 RUN adduser -D automations && \
     mkdir -p /opt/automations/included-scripts && \
     mkdir -p /opt/automations/scripts && \
-    mkdir -p /opt/automations/logs && \
     chown -R automations:automations /opt/automations
+# TODO: remove logs directory, not used anymore
 
 # Copy included scripts
 COPY --chown=automations:automations ./scripts/ /opt/automations/included-scripts/
@@ -53,18 +60,18 @@ ENTRYPOINT  ["/usr/local/bin/webhook"]
 # Cron
 FROM base AS cron
 
-# Install cronie (cron daemon)
-RUN apk add --no-cache \
-    cronie
+# Copy supercronic binary
+COPY --from=build-supercronic /usr/local/bin/supercronic /usr/local/bin/supercronic
 
 # Configure crontabs
 RUN mkdir -p /etc/crontabs && \
-    chown root:root /etc/crontabs && \
-    chmod 755 /etc/crontabs && \
+    chown automations:automations /etc/crontabs && \
+    chmod 700 /etc/crontabs && \
     # Create default crontab \
-    echo "* * * * * echo \"Hello from \$(whoami) at \$(date)\" >> /opt/automations/logs/cron.log 2>&1" > /etc/crontabs/automations && \
+    echo "* * * * * echo \"Hello from \$(whoami) at \$(date)\"" > /etc/crontabs/automations && \
     chown automations:automations /etc/crontabs/automations && \
     chmod 600 /etc/crontabs/automations
 
-# Run crond in foreground
-CMD ["crond", "-f"]
+# Run supercronic in foreground as non root
+USER automations
+CMD ["/usr/local/bin/supercronic", "/etc/crontabs/automations"]

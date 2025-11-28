@@ -5,5 +5,5 @@
 SHELL=/bin/sh
 PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 
-# * * * * * echo "Hello from $(whoami) at $(date) on mounted crontab" >> /opt/automations/logs/cron.log 2>&1
-* * * * * /opt/automations/scripts/demo.sh >> /opt/automations/logs/demo.log 2>&1
+# * * * * * echo "Hello from $(whoami) at $(date) on mounted crontab"
+* * * * * /opt/automations/scripts/demo.sh

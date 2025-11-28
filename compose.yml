@@ -26,7 +26,6 @@ services:
       target: cron
       args:
         AWS_ENABLED: "true"
-    user: root # Daemon needs to run as a root. But your crontab will be run as user 'automations'
     networks:
       - default
     volumes:
@@ -34,8 +33,6 @@ services:
       - ./examples/demo.sh:/opt/automations/scripts/demo.sh
       # Mount the user 'automations' crontab from the repository
       - ./examples/crontab:/etc/crontabs/automations
-      # Mount the logs directory
-      - ./logs:/opt/automations/logs
     restart: unless-stopped
 
   docker-socket-proxy:
