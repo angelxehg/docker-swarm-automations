@@ -1,13 +1,13 @@
 # Build supercronic
-FROM golang:alpine AS build-supercronic
+FROM golang:alpine3.23 AS build-supercronic
 WORKDIR /go/src/github.com/aptible/supercronic
 RUN apk add --no-cache git
 RUN git clone https://github.com/aptible/supercronic.git . && \
     git checkout v0.2.39 && \
     go build -o /usr/local/bin/supercronic .
 
-# Build webhook. Taken from https://github.com/almir/docker-webhook
-FROM golang:alpine AS build-webhook
+# Build webhook. Based on from https://github.com/almir/docker-webhook
+FROM golang:alpine3.23 AS build-webhook
 
 # Install dependencies
 WORKDIR /go/src/github.com/adnanh/webhook
@@ -21,7 +21,7 @@ RUN go mod download
 RUN CGO_ENABLED=0 go build -ldflags="-s -w" -o /usr/local/bin/webhook
 
 # Base
-FROM docker:29.0.2-cli-alpine3.22 AS base
+FROM docker:29.1.2-cli-alpine3.23 AS base
 
 # Install common dependencies
 ARG AWS_ENABLED=false
