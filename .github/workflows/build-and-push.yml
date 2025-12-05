@@ -33,42 +33,70 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and push all images
+      - name: Build webhook (no AWS)
         uses: docker/build-push-action@v6
         with:
           context: .
           file: ./Dockerfile
-          target: ${{ matrix.target }}
+          target: webhook
           build-args: |
-            AWS_ENABLED=${{ matrix.aws }}
-
+            AWS_ENABLED=false
           push: ${{ github.event_name != 'pull_request' }}
           tags: |
-            ${{ env.REGISTRY }}/${{ env.REPO }}:${{ matrix.tag }}-${{ env.VERSION }}
-
+            ${{ env.REGISTRY }}/${{ env.REPO }}:webhook-${{ env.VERSION }}
           platforms: |
             linux/amd64
             linux/arm64
-
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          # --- webhook ---
-          - target: webhook
-            aws: "false"
-            tag: "webhook"
-          - target: webhook
-            aws: "true"
-            tag: "webhook-aws"
+      - name: Build webhook (AWS)
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./Dockerfile
+          target: webhook
+          build-args: |
+            AWS_ENABLED=true
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: |
+            ${{ env.REGISTRY }}/${{ env.REPO }}:webhook-aws-${{ env.VERSION }}
+          platforms: |
+            linux/amd64
+            linux/arm64
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
-          # --- cron ---
-          - target: cron
-            aws: "false"
-            tag: "cron"
-          - target: cron
-            aws: "true"
-            tag: "cron-aws"
+      - name: Build cron (no AWS)
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./Dockerfile
+          target: cron
+          build-args: |
+            AWS_ENABLED=false
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: |
+            ${{ env.REGISTRY }}/${{ env.REPO }}:cron-${{ env.VERSION }}
+          platforms: |
+            linux/amd64
+            linux/arm64
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Build cron (AWS)
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./Dockerfile
+          target: cron
+          build-args: |
+            AWS_ENABLED=true
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: |
+            ${{ env.REGISTRY }}/${{ env.REPO }}:cron-aws-${{ env.VERSION }}
+          platforms: |
+            linux/amd64
+            linux/arm64
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
