@@ -28,8 +28,15 @@ ARG AWS_ENABLED=false
 RUN apk add --no-cache \
     netcat-openbsd \
     curl \
-    jq && \
+    jq \
+    gettext \
+    openssl && \
     if [ "$AWS_ENABLED" = "true" ]; then apk add --no-cache aws-cli; fi
+# netcat-openbsd: Provides 'nc' command, useful for checking connection to Docker Socket Proxy.
+# curl: Useful for callbacks, calling other webhooks.
+# jq: Useful to work with json, on various docker outputs.
+# gettext: Useful for templating. For example a cron job that rotates Docker Secrets.
+# openssl: Useful for generating random values.
 
 # Create non root user
 RUN adduser -D automations && \
