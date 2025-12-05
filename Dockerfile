@@ -24,19 +24,21 @@ RUN CGO_ENABLED=0 go build -ldflags="-s -w" -o /usr/local/bin/webhook
 FROM docker:29.1.2-cli-alpine3.23 AS base
 
 # Install common dependencies
-ARG AWS_ENABLED=false
 RUN apk add --no-cache \
     netcat-openbsd \
     curl \
     jq \
     gettext \
-    openssl && \
-    if [ "$AWS_ENABLED" = "true" ]; then apk add --no-cache aws-cli; fi
+    openssl
 # netcat-openbsd: Provides 'nc' command, useful for checking connection to Docker Socket Proxy.
 # curl: Useful for callbacks, calling other webhooks.
 # jq: Useful to work with json, on various docker outputs.
 # gettext: Useful for templating. For example a cron job that rotates Docker Secrets.
 # openssl: Useful for generating random values.
+
+# Optional: Install AWS CLI
+ARG AWS_ENABLED=false
+RUN if [ "$AWS_ENABLED" = "true" ]; then apk add --no-cache aws-cli; fi
 
 # Create non root user
 RUN adduser -D automations && \
